@@ -1,4 +1,5 @@
 import random
+import pickle
 import numpy as np
 from collections import deque
 from keras import Sequential
@@ -16,10 +17,10 @@ class DeepQNetwork:
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
-        self.epsilon_decay = 0.99
+        self.epsilon_decay = 0.995
         self.epsilon_min = 0.01
         self.batch_size = 50
-        self.memory = deque(maxlen=1000000)
+        self.memory = deque(maxlen=10000000)
         self.model = self.create_model()
 
     def create_model(self):
@@ -38,6 +39,14 @@ class DeepQNetwork:
 
     def update_memory(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
+
+    def save_memory(self):
+        memory_file = open('memory_discrete.npy', 'wb')
+        pickle.dump(self.memory, memory_file)
+
+    def load_memory(self):
+        memory_file = open('memory_discrete.npy', 'rb')
+        self.memory = pickle.load(memory_file)
 
     def replay(self):
         if len(self.memory) < self.batch_size:
