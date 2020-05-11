@@ -31,7 +31,8 @@ def train_network(epochs):
                 print("episode: {}/{}, score: {}".format(i, epochs, score))
                 break
         loss.append(score)
-
+        if i % 100 == 0:
+            agent.save_memory()
         # Average score of last 100 episode
         is_solved = mean(loss[-100:])
         if is_solved > 200:
@@ -45,7 +46,7 @@ def train_network(epochs):
 if __name__ == '__main__':
     print(env.observation_space)
     print(env.action_space)
-    episodes = 300
+    episodes = 500
     training_loss = train_network(episodes)
     plt.plot([i + 1 for i in range(0, len(training_loss), 2)], training_loss[::2])
     plt.show()
