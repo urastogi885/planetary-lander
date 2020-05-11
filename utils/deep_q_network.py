@@ -19,7 +19,7 @@ class DeepQNetwork:
         self.epsilon = epsilon
         self.epsilon_decay = 0.995
         self.epsilon_min = 0.01
-        self.batch_size = 50
+        self.batch_size = 60
         self.memory = deque(maxlen=10000000)
         self.model = self.create_model()
 
