@@ -11,14 +11,14 @@ seed(0)
 
 
 def train_network(epochs):
-    loss = []
+    loss, actions = [], [0]
     agent = DeepQNetwork(env.observation_space.shape[0], env.action_space.n)
+    max_steps = 3000
     for i in range(epochs):
         state = env.reset()
         state = reshape(state, (1, 8))
         score = 0
-        max_steps = 3000
-        for _ in range(max_steps):
+        for j in range(max_steps):
             action = agent.get_optimal_action(state)
             env.render()
             next_state, reward, done, _ = env.step(action)
@@ -27,10 +27,12 @@ def train_network(epochs):
             agent.update_memory(state, action, reward, next_state, done)
             state = next_state
             agent.replay()
+            actions[-1] += 1
             if done:
                 print("episode: {}/{}, score: {}".format(i, epochs, score))
                 break
         loss.append(score)
+        actions.append(0)
         if i % 100 == 0:
             agent.save_memory()
         # Average score of last 100 episode
@@ -44,8 +46,6 @@ def train_network(epochs):
 
 
 if __name__ == '__main__':
-    print(env.observation_space)
-    print(env.action_space)
     episodes = 500
     training_loss = train_network(episodes)
     plt.plot([i + 1 for i in range(0, len(training_loss), 2)], training_loss[::2])
